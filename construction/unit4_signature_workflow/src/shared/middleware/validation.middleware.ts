@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { validate, ValidationError as ClassValidatorError } from 'class-validator';
 import { plainToClass } from 'class-transformer';
 import { sendError } from '../utils/response-formatter';
+import { appConfig } from '../../config/app.config';
 
 /**
  * Validation Middleware Factory
@@ -45,6 +46,7 @@ export function validateBody<T extends object>(dtoClass: new () => T) {
  * Validate UUID parameter
  * 
  * Validates that a route parameter is a valid UUID v4.
+ * In development mode with ALLOW_TEST_REPORT_IDS=true, allows test values like "test", "demo".
  * 
  * @param paramName Name of the parameter to validate
  * @returns Express middleware function
@@ -61,11 +63,21 @@ export function validateUuidParam(paramName: string) {
     // UUID v4 regex
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
     
-    if (!uuidRegex.test(paramValue)) {
-      sendError(res, `Invalid ${paramName} format. Expected UUID v4.`, 400);
+    // Check if it's a valid UUID
+    if (uuidRegex.test(paramValue)) {
+      next();
       return;
     }
 
-    next();
+    // In development mode with test mode enabled, allow specific test values
+    if (appConfig.allowTestReportIds && paramName === 'reportId') {
+      const allowedTestValues = ['test', 'demo', 'sample'];
+      if (allowedTestValues.includes(paramValue.toLowerCase())) {
+        next();
+        return;
+      }
+    }
+
+    sendError(res, `Invalid ${paramName} format. Expected UUID v4.`, 400);
   };
 }

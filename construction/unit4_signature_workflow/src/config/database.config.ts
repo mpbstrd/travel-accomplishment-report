@@ -69,8 +69,15 @@ export const databaseConfig: DataSourceOptions = {
   database: dbPath,
   
   // Entity and migration paths
-  entities: ['src/features/**/entities/*.entity.ts'],
-  migrations: ['src/database/migrations/*.ts'],
+  // Use absolute paths to ensure entities are found
+  entities: [
+    path.join(__dirname, '../features/**/entities/*.entity.js'),
+    path.join(__dirname, '../../dist/features/**/entities/*.entity.js')
+  ],
+  migrations: [
+    path.join(__dirname, '../database/migrations/*.js'),
+    path.join(__dirname, '../../dist/database/migrations/*.js')
+  ],
   
   // Synchronization
   // PRODUCTION: ALWAYS set to false, use migrations instead

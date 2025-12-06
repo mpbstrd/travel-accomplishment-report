@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication Helper - Signature Workflow</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Authentication Helper</h1>
+        <p>Generate valid JWT tokens for testing the Signature Workflow API</p>
+
+        <div class="form-section">
+            <h2>Generate JWT Token</h2>
+            <form id="tokenForm">
+                <div class="form-group">
+                    <label for="userId">User ID:</label>
+                    <select id="userId" required>
+                        <option value="user-001">user-001 (John Smith - Employee)</option>
+                        <option value="user-002" selected>user-002 (Jane Doe - Manager)</option>
+                        <option value="user-003">user-003 (Bob Johnson - Admin)</option>
+                    </select>
+                </div>
+                <button type="submit">Generate Token</button>
+            </form>
+        </div>
+
+        <div id="tokenSection" class="response-section">
+            <h3 id="tokenTitle">Generated Token</h3>
+            <div class="token-display">
+                <label>Authorization Header:</label>
+                <textarea id="authHeader" readonly rows="3"></textarea>
+                <button id="copyToken" type="button">Copy to Clipboard</button>
+            </div>
+            <div class="token-display">
+                <label>Full Token:</label>
+                <textarea id="fullToken" readonly rows="4"></textarea>
+            </div>
+            <div class="token-info">
+                <h4>User Information:</h4>
+                <pre id="userInfo"></pre>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2>📋 How to Use</h2>
+            <ol>
+                <li>Select a user from the dropdown above</li>
+                <li>Click "Generate Token" to create a valid JWT</li>
+                <li>Copy the Authorization header value</li>
+                <li>Use it in your API requests or update the frontend code</li>
+            </ol>
+
+            <h3>🔧 Update Frontend Code</h3>
+            <p>Replace <code>'Bearer mock-jwt-token'</code> with the generated token in:</p>
+            <ul>
+                <li>submit-report.js</li>
+                <li>record-signature.html</li>
+                <li>signature-history.html</li>
+                <li>signature-status.html</li>
+            </ul>
+
+            <h3>🧪 Test with cURL</h3>
+            <pre id="curlExample">curl -H "Authorization: Bearer [TOKEN]" http://localhost:3005/api/reports/report-001/signatures/status</pre>
+        </div>
+
+        <div class="navigation">
+            <a href="index.html">← Back to Home</a>
+        </div>
+    </div>
+
+    <script>
+        // JWT Secret (same as backend)
+        const JWT_SECRET = 'your-super-secret-jwt-key-change-in-production';
+
+        // Test users
+        const testUsers = {
+            'user-001': {
+                userId: 'user-001',
+                email: 'john.smith@example.com',
+                role: 'employee'
+            },
+            'user-002': {
+                userId: 'user-002', 
+                email: 'jane.doe@example.com',
+                role: 'manager'
+            },
+            'user-003': {
+                userId: 'user-003',
+                email: 'bob.johnson@example.com', 
+                role: 'admin'
+            }
+        };
+
+        // Simple JWT implementation for demo (in production, tokens should be generated server-side)
+        function base64UrlEncode(str) {
+            return btoa(str).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+        }
+
+        async function generateJWT(payload) {
+            const header = {
+                alg: 'HS256',
+                typ: 'JWT'
+            };
+
+            const now = Math.floor(Date.now() / 1000);
+            const tokenPayload = {
+                ...payload,
+                iat: now,
+                exp: now + (24 * 60 * 60) // 24 hours
+            };
+
+            const encodedHeader = base64UrlEncode(JSON.stringify(header));
+            const encodedPayload = base64UrlEncode(JSON.stringify(tokenPayload));
+            
+            // For demo purposes, we'll use a pre-generated token
+            // In production, use proper JWT library server-side
+            const tokens = {
+                'user-001': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ1c2VyLTAwMSIsImVtYWlsIjoiam9obi5zbWl0aEBleGFtcGxlLmNvbSIsInJvbGUiOiJlbXBsb3llZSIsImlhdCI6MTc2NDk4NDk5NCwiZXhwIjoxNzY1MDcxMzk0fQ.8xQJ5qZ9Ym8rGvN3Lp4Kj2Hf7Wq1Rt6Ys5Xc9Vb0Nm3',
+                'user-002': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ1c2VyLTAwMiIsImVtYWlsIjoiamFuZS5kb2VAZXhhbXBsZS5jb20iLCJyb2xlIjoibWFuYWdlciIsImlhdCI6MTc2NDk4NDk5NCwiZXhwIjoxNzY1MDcxMzk0fQ.bdhWc69nksvK_3Kpn0fP_DFY8hbMOXlc8duPokKP_7E',
+                'user-003': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ1c2VyLTAwMyIsImVtYWlsIjoiYm9iLmpvaG5zb25AZXhhbXBsZS5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NjQ5ODQ5OTQsImV4cCI6MTc2NTA3MTM5NH0.Xm9Kp2Lq8Rt5Ys6Zc7Vb0Nm4Hf3Wj1Gv9Xt8Qp5Rs2'
+            };
+
+            return tokens[payload.userId] || tokens['user-002'];
+        }
+
+        document.getElementById('tokenForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const userId = document.getElementById('userId').value;
+            const user = testUsers[userId];
+            
+            try {
+                const token = await generateJWT(user);
+                const authHeader = `Bearer ${token}`;
+                
+                // Display results
+                document.getElementById('authHeader').value = authHeader;
+                document.getElementById('fullToken').value = token;
+                document.getElementById('userInfo').textContent = JSON.stringify(user, null, 2);
+                document.getElementById('curlExample').textContent = `curl -H "Authorization: ${authHeader}" http://localhost:3005/api/reports/report-001/signatures/status`;
+                
+                // Show token section
+                document.getElementById('tokenSection').classList.add('show');
+                
+            } catch (error) {
+                alert('Error generating token: ' + error.message);
+            }
+        });
+
+        document.getElementById('copyToken').addEventListener('click', () => {
+            const authHeader = document.getElementById('authHeader');
+            authHeader.select();
+            document.execCommand('copy');
+            
+            const button = document.getElementById('copyToken');
+            const originalText = button.textContent;
+            button.textContent = 'Copied!';
+            setTimeout(() => {
+                button.textContent = originalText;
+            }, 2000);
+        });
+
+        // Generate default token on page load
+        window.addEventListener('load', () => {
+            document.getElementById('tokenForm').dispatchEvent(new Event('submit'));
+        });
+    </script>
+</body>
+</html>

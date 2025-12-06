@@ -30,8 +30,8 @@
                 <form id="signatureForm">
                     <div class="form-group">
                         <label for="reportId">Report ID *</label>
-                        <input type="text" id="reportId" name="reportId" required placeholder="e.g., report-003">
-                        <p class="help-text">Use report-003 (pending branch ack) for testing</p>
+                        <input type="text" id="reportId" name="reportId" required placeholder="Enter UUID or use test values">
+                        <p class="help-text">Enter the report ID from the submit report page, or use 'test' for testing</p>
                     </div>
 
                     <div class="form-group">
@@ -51,12 +51,14 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="userId">User ID (Signatory) *</label>
+                        <label for="userId">User (Signatory) *</label>
                         <select id="userId" name="userId" required>
                             <option value="">Select a user...</option>
-                            <option value="user-001">user-001 (John Doe - Branch Manager)</option>
-                            <option value="user-002">user-002 (Jane Smith - Branch Staff)</option>
-                            <option value="user-003">user-003 (Bob Johnson - NISD Staff)</option>
+                            <option value="john-doe">John Doe - Branch Manager</option>
+                            <option value="jane-smith">Jane Smith - Branch Staff</option>
+                            <option value="bob-johnson">Bob Johnson - NISD Staff</option>
+                            <option value="admin">System Administrator</option>
+                            <option value="test-user">Test User</option>
                         </select>
                     </div>
 
@@ -80,60 +82,6 @@
         </footer>
     </div>
 
-    <script>
-        document.getElementById('signatureForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const reportId = document.getElementById('reportId').value;
-            const signatureType = document.getElementById('signatureType').value;
-            const signatoryName = document.getElementById('signatoryName').value;
-            const userId = document.getElementById('userId').value;
-            const disclaimerAcknowledged = document.getElementById('disclaimerAcknowledged').checked;
-            
-            const responseSection = document.getElementById('responseSection');
-            const responseTitle = document.getElementById('responseTitle');
-            const responseContent = document.getElementById('responseContent');
-            
-            responseSection.className = 'response-section show';
-            responseSection.classList.remove('success', 'error');
-            responseTitle.textContent = 'Recording signature...';
-            responseContent.textContent = 'Please wait...';
-            
-            try {
-                const response = await fetch(`/api/reports/${reportId}/signatures`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer mock-jwt-token'
-                    },
-                    body: JSON.stringify({
-                        signatureType,
-                        signatoryName,
-                        disclaimerAcknowledged
-                    })
-                });
-                
-                const data = await response.json();
-                
-                if (response.ok) {
-                    responseSection.classList.add('success');
-                    responseTitle.textContent = '✅ Signature Recorded!';
-                    responseContent.textContent = JSON.stringify(data, null, 2);
-                    console.log('Signature response:', data);
-                    document.getElementById('signatureForm').reset();
-                } else {
-                    responseSection.classList.add('error');
-                    responseTitle.textContent = '❌ Error';
-                    responseContent.textContent = JSON.stringify(data, null, 2);
-                    console.error('Signature error:', data);
-                }
-            } catch (error) {
-                responseSection.classList.add('error');
-                responseTitle.textContent = '❌ Network Error';
-                responseContent.textContent = error.message;
-                console.error('Network error:', error);
-            }
-        });
-    </script>
+    <script src="record-signature.js"></script>
 </body>
 </html>

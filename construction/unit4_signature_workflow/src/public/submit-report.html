@@ -29,20 +29,23 @@
             <div class="form-section">
                 <form id="submitForm">
                     <div class="form-group">
-                        <label for="reportId">Report ID *</label>
-                        <input type="text" id="reportId" name="reportId" required placeholder="e.g., report-002">
-                        <p class="help-text">Use report-002 (draft) or create a new report ID</p>
+                        <label for="reportId">Report ID</label>
+                        <input type="text" id="reportId" name="reportId" readonly placeholder="Auto-generated UUID">
+                        <button type="button" id="generateReportId" class="btn btn-secondary">Generate New Report ID</button>
+                        <p class="help-text">Report ID is automatically generated as UUID v4 format</p>
                     </div>
 
                     <div class="form-group">
-                        <label for="userId">User ID (Submitter) *</label>
+                        <label for="userId">User (Submitter) *</label>
                         <select id="userId" name="userId" required>
                             <option value="">Select a user...</option>
-                            <option value="user-001">user-001 (John Doe - Branch Manager)</option>
-                            <option value="user-002">user-002 (Jane Smith - Branch Staff)</option>
-                            <option value="user-003">user-003 (Bob Johnson - NISD Staff)</option>
+                            <option value="john-doe">John Doe - Branch Manager</option>
+                            <option value="jane-smith">Jane Smith - Branch Staff</option>
+                            <option value="bob-johnson">Bob Johnson - NISD Staff</option>
+                            <option value="admin">System Administrator</option>
+                            <option value="test-user">Test User</option>
                         </select>
-                        <p class="help-text">The user submitting the report</p>
+                        <p class="help-text">Select the user who is submitting the report</p>
                     </div>
 
                     <button type="submit" class="btn btn-primary">Submit Report</button>

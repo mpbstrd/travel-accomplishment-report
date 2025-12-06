@@ -1,17 +1,8 @@
-// UUID v4 Generator
-function generateUUIDv4() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-        const r = Math.random() * 16 | 0;
-        const v = c == 'x' ? r : (r & 0x3 | 0x8);
-        return v.toString(16);
-    });
-}
-
-// User mapping - maps user-friendly names to system IDs
+// User mapping - same as submit-report.js for consistency
 const userMapping = {
     'john-doe': {
-        id: 'user-001',  // In test mode, use simple IDs
-        uuid: '11111111-1111-4111-8111-111111111111',  // UUID for production
+        id: 'user-001',
+        uuid: '11111111-1111-4111-8111-111111111111',
         name: 'John Doe',
         role: 'Branch Manager'
     },
@@ -50,63 +41,53 @@ function getUserId(userKey) {
     return user.uuid;
 }
 
-// Initialize page
-document.addEventListener('DOMContentLoaded', function() {
-    // Generate initial report ID
-    generateNewReportId();
+// Auto-fill signatory name when user is selected
+document.getElementById('userId').addEventListener('change', function() {
+    const selectedUser = this.value;
+    const signatoryNameInput = document.getElementById('signatoryName');
     
-    // Add event listener for generate button
-    document.getElementById('generateReportId').addEventListener('click', generateNewReportId);
+    if (selectedUser && userMapping[selectedUser]) {
+        signatoryNameInput.value = userMapping[selectedUser].name;
+    }
 });
 
-function generateNewReportId() {
-    const reportIdInput = document.getElementById('reportId');
-    reportIdInput.value = generateUUIDv4();
-}
-
-// Form submission
-document.getElementById('submitForm').addEventListener('submit', async (e) => {
+document.getElementById('signatureForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     
     const reportId = document.getElementById('reportId').value;
+    const signatureType = document.getElementById('signatureType').value;
+    const signatoryName = document.getElementById('signatoryName').value;
     const selectedUser = document.getElementById('userId').value;
-    const responseSection = document.getElementById('responseSection');
-    const responseTitle = document.getElementById('responseTitle');
-    const responseContent = document.getElementById('responseContent');
-    
-    // Validate inputs
-    if (!reportId) {
-        alert('Please generate a Report ID');
-        return;
-    }
-    
-    if (!selectedUser) {
-        alert('Please select a user');
-        return;
-    }
+    const disclaimerAcknowledged = document.getElementById('disclaimerAcknowledged').checked;
     
     // Get the mapped user ID
     const userId = getUserId(selectedUser);
     if (!userId) {
-        alert('Invalid user selection');
+        alert('Please select a valid user');
         return;
     }
     
-    // Show loading state
+    const responseSection = document.getElementById('responseSection');
+    const responseTitle = document.getElementById('responseTitle');
+    const responseContent = document.getElementById('responseContent');
+    
     responseSection.className = 'response-section show';
     responseSection.classList.remove('success', 'error');
-    responseTitle.textContent = 'Submitting...';
+    responseTitle.textContent = 'Recording signature...';
     responseContent.textContent = 'Please wait...';
     
     try {
-        const response = await fetch(`/api/reports/${reportId}/signatures/submit`, {
+        const response = await fetch(`/api/reports/${reportId}/signatures`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ1c2VyLTAwMiIsImVtYWlsIjoiamFuZS5kb2VAZXhhbXBsZS5jb20iLCJyb2xlIjoibWFuYWdlciIsImlhdCI6MTc2NDk4NDk5NCwiZXhwIjoxNzY1MDcxMzk0fQ.bdhWc69nksvK_3Kpn0fP_DFY8hbMOXlc8duPokKP_7E'
             },
-            body: JSON.stringify({ 
-                userId: userId
+            body: JSON.stringify({
+                signatureType,
+                signatoryName,
+                disclaimerAcknowledged,
+                userId
             })
         });
         
@@ -114,18 +95,21 @@ document.getElementById('submitForm').addEventListener('submit', async (e) => {
         
         if (response.ok) {
             responseSection.classList.add('success');
-            responseTitle.textContent = '✅ Success!';
+            responseTitle.textContent = '✅ Signature Recorded!';
             responseContent.textContent = JSON.stringify(data, null, 2);
-            console.log('Submit response:', data);
+            console.log('Signature response:', data);
             
             // Show user info in response
             const user = userMapping[selectedUser];
-            console.log(`Submitted by: ${user.name} (${user.role}) - ID: ${userId}`);
+            console.log(`Signature recorded by: ${user.name} (${user.role}) - ID: ${userId}`);
+            
+            // Reset form
+            document.getElementById('signatureForm').reset();
         } else {
             responseSection.classList.add('error');
             responseTitle.textContent = '❌ Error';
             responseContent.textContent = JSON.stringify(data, null, 2);
-            console.error('Submit error:', data);
+            console.error('Signature error:', data);
         }
     } catch (error) {
         responseSection.classList.add('error');

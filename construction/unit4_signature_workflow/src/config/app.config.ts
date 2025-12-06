@@ -46,5 +46,10 @@ export const appConfig = {
   
   // Feature flags
   enableSwagger: process.env.ENABLE_SWAGGER === 'true',
-  enableMetrics: process.env.ENABLE_METRICS === 'true'
+  enableMetrics: process.env.ENABLE_METRICS === 'true',
+  
+  // Test mode settings
+  // DEVELOPMENT: Allow non-UUID reportIds for testing (e.g., "test", "demo")
+  // PRODUCTION: Should always be false
+  allowTestReportIds: process.env.NODE_ENV === 'development' && process.env.ALLOW_TEST_REPORT_IDS === 'true'
 };
