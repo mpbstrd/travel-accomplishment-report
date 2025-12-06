@@ -30,8 +30,8 @@
                 <form id="historyForm">
                     <div class="form-group">
                         <label for="reportId">Report ID *</label>
-                        <input type="text" id="reportId" name="reportId" required placeholder="e.g., report-001">
-                        <p class="help-text">Try report-001 (completed) or report-003 (partial)</p>
+                        <input type="text" id="reportId" name="reportId" required placeholder="Enter UUID or use 'test'">
+                        <p class="help-text">Enter a report ID from submit report page, or use 'test' for testing</p>
                     </div>
 
                     <button type="submit" class="btn btn-primary">View History</button>
@@ -49,49 +49,6 @@
         </footer>
     </div>
 
-    <script>
-        document.getElementById('historyForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const reportId = document.getElementById('reportId').value;
-            
-            const responseSection = document.getElementById('responseSection');
-            const responseTitle = document.getElementById('responseTitle');
-            const responseContent = document.getElementById('responseContent');
-            
-            responseSection.className = 'response-section show';
-            responseSection.classList.remove('success', 'error');
-            responseTitle.textContent = 'Fetching history...';
-            responseContent.textContent = 'Please wait...';
-            
-            try {
-                const response = await fetch(`/api/reports/${reportId}/signatures/history`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': 'Bearer mock-jwt-token'
-                    }
-                });
-                
-                const data = await response.json();
-                
-                if (response.ok) {
-                    responseSection.classList.add('success');
-                    responseTitle.textContent = '✅ History Retrieved';
-                    responseContent.textContent = JSON.stringify(data, null, 2);
-                    console.log('History response:', data);
-                } else {
-                    responseSection.classList.add('error');
-                    responseTitle.textContent = '❌ Error';
-                    responseContent.textContent = JSON.stringify(data, null, 2);
-                    console.error('History error:', data);
-                }
-            } catch (error) {
-                responseSection.classList.add('error');
-                responseTitle.textContent = '❌ Network Error';
-                responseContent.textContent = error.message;
-                console.error('Network error:', error);
-            }
-        });
-    </script>
+    <script src="signature-history.js"></script>
 </body>
 </html>
