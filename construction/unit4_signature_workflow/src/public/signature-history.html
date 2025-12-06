@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signature History - Signature Workflow</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🖊️ Signature Workflow Testing UI</h1>
+            <p class="subtitle">View Signature History</p>
+        </header>
+
+        <nav class="nav-menu">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="submit-report.html" class="nav-link">Submit Report</a>
+            <a href="record-signature.html" class="nav-link">Record Signature</a>
+            <a href="signature-status.html" class="nav-link">Signature Status</a>
+            <a href="signature-history.html" class="nav-link active">Signature History</a>
+            <a href="/api-docs" class="nav-link" target="_blank">API Docs</a>
+        </nav>
+
+        <main>
+            <h2>View Signature History</h2>
+            <p>View all signatures recorded for a report in chronological order.</p>
+
+            <div class="form-section">
+                <form id="historyForm">
+                    <div class="form-group">
+                        <label for="reportId">Report ID *</label>
+                        <input type="text" id="reportId" name="reportId" required placeholder="e.g., report-001">
+                        <p class="help-text">Try report-001 (completed) or report-003 (partial)</p>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">View History</button>
+                </form>
+            </div>
+
+            <div id="responseSection" class="response-section">
+                <h3 id="responseTitle">Response</h3>
+                <pre id="responseContent"></pre>
+            </div>
+        </main>
+
+        <footer>
+            <p>Unit 4: Signature Workflow | Local Testing Environment</p>
+        </footer>
+    </div>
+
+    <script>
+        document.getElementById('historyForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const reportId = document.getElementById('reportId').value;
+            
+            const responseSection = document.getElementById('responseSection');
+            const responseTitle = document.getElementById('responseTitle');
+            const responseContent = document.getElementById('responseContent');
+            
+            responseSection.className = 'response-section show';
+            responseSection.classList.remove('success', 'error');
+            responseTitle.textContent = 'Fetching history...';
+            responseContent.textContent = 'Please wait...';
+            
+            try {
+                const response = await fetch(`/api/reports/${reportId}/signatures/history`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer mock-jwt-token'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    responseSection.classList.add('success');
+                    responseTitle.textContent = '✅ History Retrieved';
+                    responseContent.textContent = JSON.stringify(data, null, 2);
+                    console.log('History response:', data);
+                } else {
+                    responseSection.classList.add('error');
+                    responseTitle.textContent = '❌ Error';
+                    responseContent.textContent = JSON.stringify(data, null, 2);
+                    console.error('History error:', data);
+                }
+            } catch (error) {
+                responseSection.classList.add('error');
+                responseTitle.textContent = '❌ Network Error';
+                responseContent.textContent = error.message;
+                console.error('Network error:', error);
+            }
+        });
+    </script>
+</body>
+</html>

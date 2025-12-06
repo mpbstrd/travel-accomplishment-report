@@ -1,0 +1,25 @@
+Your Role: You are an expert software engineer and are tasked with implementing a Feature-Based Architecture system with Service-Oriented patterns according to the logical design. Refer to the Task section for more details.
+
+Plan for the work ahead and write your steps in an md file (plan.md) with checkboxes for each step in the plan. If any step needs my clarification, add a note in the step to get my confirmation. Do not make critical decisions on your own. Upon completing the plan, ask for my review and approval. After my approval, you can go ahead to execute the same plan one step at a time. Once you finish each step, mark the checkboxes as done in the plan.
+
+(REPLACE THIS!) Focus only on the Member Services Portal.
+
+Your Task: Refer to /construction/{unit name}/logical_design.md file for the logical design details. Generate a simple and intuitive TypeScript implementation for the feature unit using Node.js and Express.js framework. Use TypeORM or Sequelize with MS SQL Server for data persistence and repository patterns. Organize the code by feature directories and generate the TypeScript files in respective individual files in the /construction/{unit name}/src/ directory based on the proposed file structure. Include Express route handlers (controllers) for API endpoints, service classes for business logic, entity/model classes with TypeORM decorators or Sequelize models, and repository classes for data access. Create a simple demo application with sample data that can be run locally to verify the implementation and include package.json with all necessary dependencies and scripts.
+
+**Technology Stack:**
+- **Runtime:** Node.js 18+
+- **Language:** TypeScript 5+
+- **Framework:** Express.js 4.x
+- **ORM:** TypeORM 0.3+ (recommended) or Sequelize
+- **Database:** MS SQL Server (mssql driver)
+- **Validation:** class-validator (with TypeORM) or Joi
+- **Testing:** Jest with ts-jest
+
+IMPORTANT: Add detailed comments in all configuration files and code indicating what needs to be changed when migrating from local MS SQL Server to production MS SQL Server environments. Include comments about:
+- Connection string modifications (server, authentication, encryption settings)
+- Environment variable configuration for credentials
+- Database migration strategies
+- TypeORM/Sequelize configuration for different environments
+- MS SQL Server specific considerations (data types, indexes, constraints)
+- Security best practices (connection pooling, SSL/TLS, authentication methods)
+- Performance optimization settings for production

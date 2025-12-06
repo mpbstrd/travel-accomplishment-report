@@ -1,0 +1,97 @@
+# Docker Compose Configuration
+# 
+# NOTE: This project now uses SQLite for local development.
+# No Docker containers are required to run the application.
+# 
+# This file is kept for reference and can be used if you want to
+# run production databases (PostgreSQL, MS SQL Server, MySQL) locally.
+#
+# To use SQLite (default):
+#   - Just run: npm start
+#   - No Docker needed
+#   - Database file: ./src/data/signature_workflow.db
+#
+# To use PostgreSQL for production testing:
+#   - Uncomment the postgres service below
+#   - Update .env with PostgreSQL settings
+#   - Run: docker-compose up -d
+
+version: '3.8'
+
+services:
+  # PostgreSQL (Recommended for Production)
+  # Uncomment to use PostgreSQL instead of SQLite
+  # postgres:
+  #   image: postgres:16-alpine
+  #   container_name: unit4-postgres
+  #   environment:
+  #     - POSTGRES_DB=signature_workflow_db
+  #     - POSTGRES_USER=postgres
+  #     - POSTGRES_PASSWORD=postgres
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres-data:/var/lib/postgresql/data
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -U postgres"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #   networks:
+  #     - unit4-network
+
+  # MS SQL Server (Alternative for Production)
+  # Uncomment to use MS SQL Server instead of SQLite
+  # mssql:
+  #   image: mcr.microsoft.com/mssql/server:2022-latest
+  #   container_name: unit4-mssql
+  #   environment:
+  #     - ACCEPT_EULA=Y
+  #     - SA_PASSWORD=YourStrong@Passw0rd
+  #     - MSSQL_PID=Developer
+  #   ports:
+  #     - "1433:1433"
+  #   volumes:
+  #     - mssql-data:/var/opt/mssql
+  #   healthcheck:
+  #     test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P YourStrong@Passw0rd -Q "SELECT 1" || exit 1
+  #     interval: 10s
+  #     timeout: 3s
+  #     retries: 10
+  #     start_period: 10s
+  #   networks:
+  #     - unit4-network
+
+  # MySQL (Alternative for Production)
+  # Uncomment to use MySQL instead of SQLite
+  # mysql:
+  #   image: mysql:8.0
+  #   container_name: unit4-mysql
+  #   environment:
+  #     - MYSQL_ROOT_PASSWORD=rootpassword
+  #     - MYSQL_DATABASE=signature_workflow_db
+  #     - MYSQL_USER=appuser
+  #     - MYSQL_PASSWORD=apppassword
+  #   ports:
+  #     - "3306:3306"
+  #   volumes:
+  #     - mysql-data:/var/lib/mysql
+  #   healthcheck:
+  #     test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #   networks:
+  #     - unit4-network
+
+volumes:
+  # postgres-data:
+  #   driver: local
+  # mssql-data:
+  #   driver: local
+  # mysql-data:
+  #   driver: local
+
+networks:
+  unit4-network:
+    driver: bridge

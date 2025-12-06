@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signature Status - Signature Workflow</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🖊️ Signature Workflow Testing UI</h1>
+            <p class="subtitle">Check Signature Status</p>
+        </header>
+
+        <nav class="nav-menu">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="submit-report.html" class="nav-link">Submit Report</a>
+            <a href="record-signature.html" class="nav-link">Record Signature</a>
+            <a href="signature-status.html" class="nav-link active">Signature Status</a>
+            <a href="signature-history.html" class="nav-link">Signature History</a>
+            <a href="/api-docs" class="nav-link" target="_blank">API Docs</a>
+        </nav>
+
+        <main>
+            <h2>Check Signature Status</h2>
+            <p>View the current status of the signature workflow for a report.</p>
+
+            <div class="form-section">
+                <form id="statusForm">
+                    <div class="form-group">
+                        <label for="reportId">Report ID *</label>
+                        <input type="text" id="reportId" name="reportId" required placeholder="e.g., report-001">
+                        <p class="help-text">Try report-001, report-002, or report-003</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="userId">User ID (Optional)</label>
+                        <select id="userId" name="userId">
+                            <option value="">None</option>
+                            <option value="user-001">user-001 (John Doe)</option>
+                            <option value="user-002">user-002 (Jane Smith)</option>
+                            <option value="user-003">user-003 (Bob Johnson)</option>
+                        </select>
+                        <p class="help-text">Include to check if this user can sign</p>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Check Status</button>
+                </form>
+            </div>
+
+            <div id="responseSection" class="response-section">
+                <h3 id="responseTitle">Response</h3>
+                <pre id="responseContent"></pre>
+            </div>
+        </main>
+
+        <footer>
+            <p>Unit 4: Signature Workflow | Local Testing Environment</p>
+        </footer>
+    </div>
+
+    <script>
+        document.getElementById('statusForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const reportId = document.getElementById('reportId').value;
+            const userId = document.getElementById('userId').value;
+            
+            const responseSection = document.getElementById('responseSection');
+            const responseTitle = document.getElementById('responseTitle');
+            const responseContent = document.getElementById('responseContent');
+            
+            responseSection.className = 'response-section show';
+            responseSection.classList.remove('success', 'error');
+            responseTitle.textContent = 'Fetching status...';
+            responseContent.textContent = 'Please wait...';
+            
+            try {
+                let url = `/api/reports/${reportId}/signatures/status`;
+                if (userId) {
+                    url += `?userId=${userId}`;
+                }
+                
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer mock-jwt-token'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    responseSection.classList.add('success');
+                    responseTitle.textContent = '✅ Status Retrieved';
+                    responseContent.textContent = JSON.stringify(data, null, 2);
+                    console.log('Status response:', data);
+                } else {
+                    responseSection.classList.add('error');
+                    responseTitle.textContent = '❌ Error';
+                    responseContent.textContent = JSON.stringify(data, null, 2);
+                    console.error('Status error:', data);
+                }
+            } catch (error) {
+                responseSection.classList.add('error');
+                responseTitle.textContent = '❌ Network Error';
+                responseContent.textContent = error.message;
+                console.error('Network error:', error);
+            }
+        });
+    </script>
+</body>
+</html>

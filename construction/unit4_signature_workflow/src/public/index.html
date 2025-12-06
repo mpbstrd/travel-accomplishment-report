@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signature Workflow - Testing UI</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🖊️ Signature Workflow Testing UI</h1>
+            <p class="subtitle">Local Testing Environment for Unit 4</p>
+        </header>
+
+        <nav class="nav-menu">
+            <a href="index.html" class="nav-link active">Home</a>
+            <a href="submit-report.html" class="nav-link">Submit Report</a>
+            <a href="record-signature.html" class="nav-link">Record Signature</a>
+            <a href="signature-status.html" class="nav-link">Signature Status</a>
+            <a href="signature-history.html" class="nav-link">Signature History</a>
+            <a href="/api-docs" class="nav-link" target="_blank">API Docs</a>
+        </nav>
+
+        <main>
+            <div class="welcome-section">
+                <h2>Welcome to the Signature Workflow Testing UI</h2>
+                <p>This interface allows you to manually test all signature workflow APIs without writing code.</p>
+                
+                <div class="info-box">
+                    <h3>📋 Available Test Scenarios</h3>
+                    <ul>
+                        <li><strong>report-001:</strong> Completed workflow with all 3 signatures</li>
+                        <li><strong>report-002:</strong> Draft workflow (incomplete report)</li>
+                        <li><strong>report-003:</strong> Pending Branch Acknowledgement (1 signature completed)</li>
+                    </ul>
+                </div>
+
+                <div class="info-box">
+                    <h3>👥 Test Users</h3>
+                    <ul>
+                        <li><strong>user-001:</strong> John Doe (Branch Manager)</li>
+                        <li><strong>user-002:</strong> Jane Smith (Branch Staff - Preparer)</li>
+                        <li><strong>user-003:</strong> Bob Johnson (NISD Staff)</li>
+                    </ul>
+                </div>
+
+                <div class="info-box">
+                    <h3>🔧 Quick Start</h3>
+                    <ol>
+                        <li>Make sure the API server is running (npm run dev)</li>
+                        <li>Make sure the database is seeded (npm run seed)</li>
+                        <li>Use the navigation menu to access different testing features</li>
+                        <li>Check the browser console for detailed API responses</li>
+                    </ol>
+                </div>
+
+                <div class="info-box warning">
+                    <h3>⚠️ Mock Mode</h3>
+                    <p>This testing environment uses mock implementations for external services (User Management, Report Management, Notification Service). Set <code>USE_MOCK_SERVICES=true</code> in your .env file.</p>
+                </div>
+            </div>
+
+            <div class="quick-actions">
+                <h3>Quick Actions</h3>
+                <div class="action-buttons">
+                    <a href="submit-report.html" class="btn btn-primary">Submit Report for Signatures</a>
+                    <a href="record-signature.html" class="btn btn-primary">Record a Signature</a>
+                    <a href="signature-status.html" class="btn btn-secondary">Check Signature Status</a>
+                    <a href="signature-history.html" class="btn btn-secondary">View Signature History</a>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Unit 4: Signature Workflow | Local Testing Environment</p>
+        </footer>
+    </div>
+</body>
+</html>

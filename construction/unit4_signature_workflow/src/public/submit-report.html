@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Report - Signature Workflow</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🖊️ Signature Workflow Testing UI</h1>
+            <p class="subtitle">Submit Report for Signatures</p>
+        </header>
+
+        <nav class="nav-menu">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="submit-report.html" class="nav-link active">Submit Report</a>
+            <a href="record-signature.html" class="nav-link">Record Signature</a>
+            <a href="signature-status.html" class="nav-link">Signature Status</a>
+            <a href="signature-history.html" class="nav-link">Signature History</a>
+            <a href="/api-docs" class="nav-link" target="_blank">API Docs</a>
+        </nav>
+
+        <main>
+            <h2>Submit Report for Signatures</h2>
+            <p>Submit a report to initiate the signature workflow. The report must be complete with all checklist items answered.</p>
+
+            <div class="form-section">
+                <form id="submitForm">
+                    <div class="form-group">
+                        <label for="reportId">Report ID *</label>
+                        <input type="text" id="reportId" name="reportId" required placeholder="e.g., report-002">
+                        <p class="help-text">Use report-002 (draft) or create a new report ID</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="userId">User ID (Submitter) *</label>
+                        <select id="userId" name="userId" required>
+                            <option value="">Select a user...</option>
+                            <option value="user-001">user-001 (John Doe - Branch Manager)</option>
+                            <option value="user-002">user-002 (Jane Smith - Branch Staff)</option>
+                            <option value="user-003">user-003 (Bob Johnson - NISD Staff)</option>
+                        </select>
+                        <p class="help-text">The user submitting the report</p>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Submit Report</button>
+                </form>
+            </div>
+
+            <div id="responseSection" class="response-section">
+                <h3 id="responseTitle">Response</h3>
+                <pre id="responseContent"></pre>
+            </div>
+        </main>
+
+        <footer>
+            <p>Unit 4: Signature Workflow | Local Testing Environment</p>
+        </footer>
+    </div>
+
+    <script src="submit-report.js"></script>
+</body>
+</html>

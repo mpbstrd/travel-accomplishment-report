@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Record Signature - Signature Workflow</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🖊️ Signature Workflow Testing UI</h1>
+            <p class="subtitle">Record a Signature</p>
+        </header>
+
+        <nav class="nav-menu">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="submit-report.html" class="nav-link">Submit Report</a>
+            <a href="record-signature.html" class="nav-link active">Record Signature</a>
+            <a href="signature-status.html" class="nav-link">Signature Status</a>
+            <a href="signature-history.html" class="nav-link">Signature History</a>
+            <a href="/api-docs" class="nav-link" target="_blank">API Docs</a>
+        </nav>
+
+        <main>
+            <h2>Record a Signature</h2>
+            <p>Record a signature for a report. The workflow must be at the correct state for the signature type.</p>
+
+            <div class="form-section">
+                <form id="signatureForm">
+                    <div class="form-group">
+                        <label for="reportId">Report ID *</label>
+                        <input type="text" id="reportId" name="reportId" required placeholder="e.g., report-003">
+                        <p class="help-text">Use report-003 (pending branch ack) for testing</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="signatureType">Signature Type *</label>
+                        <select id="signatureType" name="signatureType" required>
+                            <option value="">Select signature type...</option>
+                            <option value="PREPARED_BY">Prepared By</option>
+                            <option value="BRANCH_ACKNOWLEDGEMENT">Branch Acknowledgement</option>
+                            <option value="NISD_ACKNOWLEDGEMENT">NISD Acknowledgement</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="signatoryName">Signatory Name *</label>
+                        <input type="text" id="signatoryName" name="signatoryName" required placeholder="e.g., John Doe" maxlength="100">
+                        <p class="help-text">Maximum 100 characters</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="userId">User ID (Signatory) *</label>
+                        <select id="userId" name="userId" required>
+                            <option value="">Select a user...</option>
+                            <option value="user-001">user-001 (John Doe - Branch Manager)</option>
+                            <option value="user-002">user-002 (Jane Smith - Branch Staff)</option>
+                            <option value="user-003">user-003 (Bob Johnson - NISD Staff)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group checkbox-group">
+                        <input type="checkbox" id="disclaimerAcknowledged" name="disclaimerAcknowledged" required>
+                        <label for="disclaimerAcknowledged">I acknowledge the disclaimer and confirm this signature *</label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Record Signature</button>
+                </form>
+            </div>
+
+            <div id="responseSection" class="response-section">
+                <h3 id="responseTitle">Response</h3>
+                <pre id="responseContent"></pre>
+            </div>
+        </main>
+
+        <footer>
+            <p>Unit 4: Signature Workflow | Local Testing Environment</p>
+        </footer>
+    </div>
+
+    <script>
+        document.getElementById('signatureForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const reportId = document.getElementById('reportId').value;
+            const signatureType = document.getElementById('signatureType').value;
+            const signatoryName = document.getElementById('signatoryName').value;
+            const userId = document.getElementById('userId').value;
+            const disclaimerAcknowledged = document.getElementById('disclaimerAcknowledged').checked;
+            
+            const responseSection = document.getElementById('responseSection');
+            const responseTitle = document.getElementById('responseTitle');
+            const responseContent = document.getElementById('responseContent');
+            
+            responseSection.className = 'response-section show';
+            responseSection.classList.remove('success', 'error');
+            responseTitle.textContent = 'Recording signature...';
+            responseContent.textContent = 'Please wait...';
+            
+            try {
+                const response = await fetch(`/api/reports/${reportId}/signatures`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer mock-jwt-token'
+                    },
+                    body: JSON.stringify({
+                        signatureType,
+                        signatoryName,
+                        disclaimerAcknowledged
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    responseSection.classList.add('success');
+                    responseTitle.textContent = '✅ Signature Recorded!';
+                    responseContent.textContent = JSON.stringify(data, null, 2);
+                    console.log('Signature response:', data);
+                    document.getElementById('signatureForm').reset();
+                } else {
+                    responseSection.classList.add('error');
+                    responseTitle.textContent = '❌ Error';
+                    responseContent.textContent = JSON.stringify(data, null, 2);
+                    console.error('Signature error:', data);
+                }
+            } catch (error) {
+                responseSection.classList.add('error');
+                responseTitle.textContent = '❌ Network Error';
+                responseContent.textContent = error.message;
+                console.error('Network error:', error);
+            }
+        });
+    </script>
+</body>
+</html>

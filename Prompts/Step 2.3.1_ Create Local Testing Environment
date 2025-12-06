@@ -1,0 +1,70 @@
+Your Role: You are an expert software engineer and are tasked with creating a comprehensive local testing environment for the implemented Feature-Based Architecture system. This includes unit tests, API testing capabilities, and a simple web UI for manual testing. Refer to the Task section for more details.
+
+Plan for the work ahead and write your steps in an md file (plan.md) with checkboxes for each step in the plan. If any step needs my clarification, add a note in the step to get my confirmation. Do not make critical decisions on your own. Upon completing the plan, ask for my review and approval. After my approval, you can go ahead to execute the same plan one step at a time. Once you finish each step, mark the checkboxes as done in the plan.
+
+(REPLACE THIS!) Focus only on the User Management & Authentication.
+
+Your Task: Refer to /construction/{unit name}/logical_design.md and the existing source code in /construction/{unit name}/src/ for implementation details. Create a comprehensive local testing environment with the following components:
+
+1. **Unit Testing Suite**
+   - Generate Jest unit tests for all service classes, repository classes, and business logic
+   - Include test cases for success scenarios, edge cases, and error handling
+   - Use Jest mocking capabilities for mocking dependencies and external integrations
+   - Organize tests in /construction/{unit name}/tests/ directory
+   - Ensure tests can run independently without external dependencies
+   - Use ts-jest for TypeScript support
+
+2. **API Implementation & Testing**
+   - Enhance or create REST API endpoints to expose all relevant functionality
+   - Add Swagger/OpenAPI documentation for API endpoints using swagger-ui-express
+   - Create API integration tests using Supertest with Jest
+   - Include sample request/response examples in API documentation
+   - Organize API tests in /construction/{unit name}/tests/integration/ directory
+
+3. **Simple Web UI for Manual Testing**
+   - Create a simple HTML/CSS/JavaScript web interface for testing all APIs
+   - Include forms and buttons to test all CRUD operations and business workflows
+   - Display API responses in a user-friendly format
+   - Add basic validation and error handling in the UI
+   - Place UI files in /construction/{unit name}/src/public/ directory
+   - Configure Express to serve static files
+   - Make the UI accessible via browser at http://localhost:3000 when the application runs
+
+4. **MS SQL Server Database Configuration**
+   - Configure MS SQL Server as the local database for testing
+   - Create database initialization scripts with sample test data
+   - Include schema creation scripts and TypeORM migrations in /construction/{unit name}/src/database/
+   - Add comments explaining MS SQL Server-specific configurations and connection settings
+   - Document how to set up local MS SQL Server (Docker container or local installation)
+   - Provide Docker Compose file for easy local MS SQL Server setup
+
+5. **Mock External Dependencies**
+   - Create mock implementations or stubs for all 3rd party integrations
+   - Mock other unit integrations that are not yet implemented
+   - Use environment variables or configuration files to switch between real and mock implementations
+   - Document all mocked services and their expected behaviors
+   - Place mock implementations in /construction/{unit name}/src/mocks/ directory
+
+6. **Testing Documentation**
+   - Create a TESTING_GUIDE.md in /construction/{unit name}/ directory
+   - Include instructions for running unit tests, starting the application, and accessing the UI
+   - Document all test scenarios covered by unit tests and UI
+   - Provide troubleshooting tips for common testing issues
+
+**Technology Stack:**
+- **Runtime:** Node.js 18+
+- **Language:** TypeScript 5+
+- **Framework:** Express.js 4.x
+- **ORM:** TypeORM 0.3+ (recommended) or Sequelize
+- **Database:** MS SQL Server (mssql driver)
+- **Testing:** Jest with ts-jest, Supertest
+- **API Docs:** swagger-ui-express
+
+IMPORTANT: 
+- All tests should run in isolation without requiring external services or databases (use in-memory database or mocked connections for unit tests)
+- The web UI should be simple and functional, not production-ready (focus on testing capability)
+- Mock all external dependencies clearly and document what is being mocked
+- Ensure the entire testing environment can be run locally with a single npm command (npm test, npm run dev)
+- Add clear comments indicating what is mocked/stubbed for testing purposes only
+- Include Docker Compose configuration for local MS SQL Server setup (optional but recommended)
+- Document how to run tests against real MS SQL Server vs mocked database
